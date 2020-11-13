@@ -1,0 +1,22 @@
+[package]
+name = "deadpool-ldap"
+version = "0.1.0"
+authors = ["Aitor Ruano <codearm@pm.me>"]
+edition = "2018"
+license = "MIT/Apache-2.0"
+description = "LDAP support for the deadpool connection pool"
+repository = "https://github.com/c0dearm/deadpool-ldap"
+keywords = ["ldap", "ldap3", "deadpool", "pool", "async"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ldap3 = { version = "0.8", default-features = false }
+deadpool = { version = "0.6", default-features = false, features = ["managed"] }
+tokio = { version = "0.3", default-features = false, features = ["rt"] }
+async-trait = "0.1"
+
+[features]
+default = []
+tls-native = ["ldap3/tls-native"]
+tls-rustls = ["ldap3/tls-rustls"]
