@@ -1,9 +1,9 @@
+pub mod errors;
+
 use async_trait::async_trait;
-use ldap3::{drive, exop::WhoAmI, Ldap, LdapConnAsync};
+use ldap3::{drive, exop::WhoAmI, Ldap, LdapConnAsync, LdapError as Error};
 
-pub use ldap3::LdapError as Error;
-
-pub type Pool = deadpool::managed::Pool<Ldap, Error>;
+pub type Pool = deadpool::managed::Pool<Ldap, errors::LdapError>;
 pub struct Manager(pub &'static str);
 
 #[async_trait]
