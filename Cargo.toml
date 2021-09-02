@@ -11,10 +11,10 @@ keywords = ["ldap", "ldap3", "deadpool", "pool", "async"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-ldap3 = { version = "0.7", default-features = false }
-deadpool = { version = "0.6", default-features = false, features = ["managed"] }
-actix-rt = { version = "1", optional = true }
-tokio = { version = "0.2", optional = true }
+ldap3 = { version = "0.9", default-features = false }
+deadpool = { version = "0.8", default-features = false, features = ["managed"] }
+actix-rt = { version = "2", optional = true }
+tokio = { version = "1.0", optional = true, features = [ "rt-multi-thread" ] }
 async-trait = "0.1"
 log = "0.4"
 
