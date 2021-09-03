@@ -7,7 +7,10 @@ pub type Pool = deadpool::managed::Pool<Ldap, errors::LdapError>;
 pub struct Manager(pub &'static str);
 
 #[async_trait]
-impl deadpool::managed::Manager<Ldap, Error> for Manager {
+impl deadpool::managed::Manager for Manager {
+    type Type = Ldap;
+    type Error = Error;
+
     async fn create(&self) -> Result<Ldap, Error> {
         let (conn, ldap) = LdapConnAsync::new(self.0).await?;
         #[cfg(feature = "default")]
