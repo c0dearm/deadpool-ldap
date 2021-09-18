@@ -1,17 +1,15 @@
-pub mod errors;
-
 use async_trait::async_trait;
-use ldap3::{exop::WhoAmI, Ldap, LdapConnAsync, LdapError as Error};
+use ldap3::{exop::WhoAmI, Ldap, LdapConnAsync, LdapError};
 
-pub type Pool = deadpool::managed::Pool<Ldap, errors::LdapError>;
 pub struct Manager(pub &'static str);
+pub type Pool = deadpool::managed::Pool<Manager>;
 
 #[async_trait]
 impl deadpool::managed::Manager for Manager {
     type Type = Ldap;
-    type Error = Error;
+    type Error = LdapError;
 
-    async fn create(&self) -> Result<Ldap, Error> {
+    async fn create(&self) -> Result<Self::Type, Self::Error> {
         let (conn, ldap) = LdapConnAsync::new(self.0).await?;
         #[cfg(feature = "default")]
         ldap3::drive!(conn);
@@ -23,7 +21,7 @@ impl deadpool::managed::Manager for Manager {
         });
         Ok(ldap)
     }
-    async fn recycle(&self, conn: &mut Ldap) -> deadpool::managed::RecycleResult<Error> {
+    async fn recycle(&self, conn: &mut Self::Type) -> deadpool::managed::RecycleResult<Self::Error> {
         conn.extended(WhoAmI).await?;
         Ok(())
     }
