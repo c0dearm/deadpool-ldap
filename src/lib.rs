@@ -1,8 +1,14 @@
 use async_trait::async_trait;
 use ldap3::{exop::WhoAmI, Ldap, LdapConnAsync, LdapError};
 
-pub struct Manager(pub &'static str);
+pub struct Manager(String);
 pub type Pool = deadpool::managed::Pool<Manager>;
+
+impl Manager {
+    pub fn new<S: Into<String>>(ldap_url: S) -> Self {
+        Self(ldap_url.into())
+    }
+}
 
 #[async_trait]
 impl deadpool::managed::Manager for Manager {
@@ -10,7 +16,7 @@ impl deadpool::managed::Manager for Manager {
     type Error = LdapError;
 
     async fn create(&self) -> Result<Self::Type, Self::Error> {
-        let (conn, ldap) = LdapConnAsync::new(self.0).await?;
+        let (conn, ldap) = LdapConnAsync::new(&self.0).await?;
         #[cfg(feature = "default")]
         ldap3::drive!(conn);
         #[cfg(feature = "rt-actix")]
