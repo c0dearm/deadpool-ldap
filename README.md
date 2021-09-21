@@ -20,9 +20,9 @@ use deadpool_ldap::{Manager, Pool};
 
 #[tokio::main]
 async fn main() {
-    let manager = Manager("ldap://example.org");
+    let manager = Manager::new("ldap://example.org");
     let pool = Pool::new(manager, 5);
-        
+
     let mut client = pool.get().await.unwrap();
     result = client.simple_bind("uid=user,dc=example,dc=org", "password").await;
     assert!(result.is_ok());
