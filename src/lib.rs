@@ -22,7 +22,7 @@ impl deadpool::managed::Manager for Manager {
         #[cfg(feature = "rt-actix")]
         actix_rt::spawn(async move {
             if let Err(e) = conn.drive().await {
-                log::warn!("LDAP connection error: {}", e);
+                log::warn!("LDAP connection error: {:?}", e);
             }
         });
         Ok(ldap)
