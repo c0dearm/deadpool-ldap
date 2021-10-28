@@ -29,6 +29,29 @@ async fn main() {
 }
 ```
 
+### Sending a custom LdapConnSettings
+
+To send custom ldap connection settings use .with_connection_settings() on the manager.
+
+```rust,ignore
+use deadpool_ldap::{Manager, Pool};
+use ldap3::LdapConnSettings;
+
+#[tokio::main]
+async fn main() {
+    let manager = Manager::new("ldap://example.org")
+        .with_connection_settings(
+            LdapConnSettings::new()
+                .set_conn_timeout(Duration::from_secs(30))
+        );
+    let pool = Pool::new(manager, 5);
+
+    let mut client = pool.get().await.unwrap();
+    result = client.simple_bind("uid=user,dc=example,dc=org", "password").await;
+    assert!(result.is_ok());
+}
+```
+
 ## License
 
 Licensed under either of
@@ -37,4 +60,3 @@ Licensed under either of
 * APACHE 2.0 license ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
 
 Choose at your option!
-
