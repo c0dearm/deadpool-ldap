@@ -21,7 +21,7 @@ use deadpool_ldap::{Manager, Pool};
 #[tokio::main]
 async fn main() {
     let manager = Manager::new("ldap://example.org");
-    let pool = Pool::new(manager, 5);
+    let pool = Pool::builder(manager).max_size(5).build().unwrap();
 
     let mut client = pool.get().await.unwrap();
     result = client.simple_bind("uid=user,dc=example,dc=org", "password").await;
@@ -44,7 +44,7 @@ async fn main() {
             LdapConnSettings::new()
                 .set_conn_timeout(Duration::from_secs(30))
         );
-    let pool = Pool::new(manager, 5);
+    let pool = Pool::builder(manager).max_size(5).build().unwrap();
 
     let mut client = pool.get().await.unwrap();
     result = client.simple_bind("uid=user,dc=example,dc=org", "password").await;
