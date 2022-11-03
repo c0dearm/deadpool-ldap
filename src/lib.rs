@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use ldap3::{exop::WhoAmI, Ldap, LdapConnAsync, LdapConnSettings, LdapError};
+use ldap3::{Ldap, LdapConnAsync, LdapConnSettings, LdapError};
 
 pub struct Manager(String, LdapConnSettings);
 pub type Pool = deadpool::managed::Pool<Manager>;
@@ -38,7 +38,8 @@ impl deadpool::managed::Manager for Manager {
         Ok(ldap)
     }
     async fn recycle(&self, conn: &mut Self::Type) -> deadpool::managed::RecycleResult<Self::Error> {
-        conn.extended(WhoAmI).await?;
+        // Revert back to anonymous bind by binding with zero credentials
+        conn.simple_bind("", "").await?;
         Ok(())
     }
 }
